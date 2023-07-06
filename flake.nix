@@ -1,43 +1,46 @@
 {
-description = "A flake for building Godot_4";
+description = "A flake for building Godot_4 with Android templates";
+
+nixConfig = {
+    extra-substituters = ["https://tunnelvr.cachix.org"];
+    extra-trusted-public-keys = ["tunnelvr.cachix.org-1:IZUIF+ytsd6o+5F0wi45s83mHI+aQaFSoHJ3zHrc2G0="];
+};
 
 inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
 outputs = { self, nixpkgs }: rec {
     system = "x86_64-linux";
-    version = "4.1";
+    version = "4.0.3";
     pkgs = import nixpkgs { inherit system; config = { allowUnfree = true; android_sdk.accept_license = true; }; };
     
     packages.x86_64-linux.godot_4_hacked =
+        with pkgs;
+        godot_4.overrideAttrs (old: {
+            src = fetchFromGitHub {
+                name = "godot_${version}"; 
+                owner = "godotengine";
+                repo = "godot";
+                rev = "${version}-stable";
+                hash = "sha256-g9+CV3HsiJqiSJpZvK0N7BqKzp2Pvi6otjRLsFdmWGk=";
+            };
 
-      with import nixpkgs { system = "x86_64-linux"; };
-      godot_4.overrideAttrs (old: {
-        src = fetchFromGitHub {
-            name = "godot_${version}"; 
-            owner = "godotengine";
-            repo = "godot";
-            rev = "${version}-stable";
-            hash = "sha256-v9qKrPYQz4c+xkSu/2ru7ZE5EzKVyXhmrxyHZQkng2U=";
-        };
+            preBuild = ''
+                substituteInPlace editor/editor_node.cpp \
+                    --replace 'About Godot' 'NNing! Godot[v${version}]'
 
-        preBuild = 
-        ''
-          substituteInPlace editor/editor_node.cpp \
-            --replace 'About Godot' 'NNing! Godot'
+                substituteInPlace platform/android/export/export_plugin.cpp \
+                    --replace 'String sdk_path = EDITOR_GET("export/android/android_sdk_path")' 'String sdk_path = std::getenv("tunnelvr_ANDROID_SDK")'
 
-          substituteInPlace platform/android/export/export_plugin.cpp \
-            --replace 'String sdk_path = EDITOR_GET("export/android/android_sdk_path")' 'String sdk_path = std::getenv("tunnelvr_ANDROID_SDK")'
+                substituteInPlace platform/android/export/export_plugin.cpp \
+                    --replace 'EDITOR_GET("export/android/debug_keystore")' 'std::getenv("tunnelvr_DEBUG_KEY")'
 
-          substituteInPlace platform/android/export/export_plugin.cpp \
-            --replace 'EDITOR_GET("export/android/debug_keystore")' 'std::getenv("tunnelvr_DEBUG_KEY")'
-
-          substituteInPlace editor/editor_paths.cpp \
-            --replace 'return get_data_dir().path_join(export_templates_folder)' 'printf("HITHERE\n"); return std::getenv("tunnelvr_EXPORT_TEMPLATES")'
-        '';
-    }); 
+                substituteInPlace editor/editor_paths.cpp \
+                    --replace 'return get_data_dir().path_join(export_templates_folder)' 'printf("HITHERE\n"); return std::getenv("tunnelvr_EXPORT_TEMPLATES")'
+            '';
+        }); 
 
     packages.x86_64-linux.godot_4_android = 
-        with import nixpkgs { system = "x86_64-linux"; config = { allowUnfree = true; android_sdk = { accept_license = true;}; }; };
+        with pkgs;
         symlinkJoin { 
             name = "godot_4-with-android-sdk";
             nativeBuildInputs = [ makeWrapper ];
@@ -49,10 +52,10 @@ outputs = { self, nixpkgs }: rec {
                     mv debug.keystore $out
                 '';
             
-               export-templates = fetchurl {
+                export-templates = fetchurl {
                     name = "godot_${version}";
                     url = "https://downloads.tuxfamily.org/godotengine/${version}/Godot_v${version}-stable_export_templates.tpz";
-                    sha256 = "sha256-FzYOLPgqTyNADXhDHKXWhhF7bnNjz98HaQfLfIb9olk=";
+                    sha256 = "sha256-e1bXbebIh1Uck7MaHHDJTpe3Kk/FYqBjUweXsmjPZt0=";
                     recursiveHash = true;
                     downloadToTemp = true;
                     postFetch = ''
@@ -68,12 +71,9 @@ outputs = { self, nixpkgs }: rec {
                             --set tunnelvr_EXPORT_TEMPLATES "${export-templates}/templates" \
                             --set tunnelvr_DEBUG_KEY "${debugKey}"
                     '';
-      };
+    };
 
 
-
-
-#    packages.x86_64-linux.godot_4_android = packages.x86_64-linux.godot_4_hacked;
     packages.x86_64-linux.default = packages.x86_64-linux.godot_4_android;
 
     devShells.x86_64-linux.default = pkgs.mkShell {
@@ -82,6 +82,5 @@ outputs = { self, nixpkgs }: rec {
             caddy
         ];
     };
-            
 };
 }
