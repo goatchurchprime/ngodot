@@ -10,7 +10,7 @@ inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
 outputs = { self, nixpkgs }: rec {
     system = "x86_64-linux";
-    version = "4.0.3";
+    version = "4.1";
     pkgs = import nixpkgs { inherit system; config = { allowUnfree = true; android_sdk.accept_license = true; }; };
     
     packages.x86_64-linux.godot_4_hacked =
@@ -21,7 +21,7 @@ outputs = { self, nixpkgs }: rec {
                 owner = "godotengine";
                 repo = "godot";
                 rev = "${version}-stable";
-                hash = "sha256-g9+CV3HsiJqiSJpZvK0N7BqKzp2Pvi6otjRLsFdmWGk=";
+                hash = "sha256-v9qKrPYQz4c+xkSu/2ru7ZE5EzKVyXhmrxyHZQkng2U=";
             };
 
             preBuild = ''
@@ -55,7 +55,7 @@ outputs = { self, nixpkgs }: rec {
                 export-templates = fetchurl {
                     name = "godot_${version}";
                     url = "https://downloads.tuxfamily.org/godotengine/${version}/Godot_v${version}-stable_export_templates.tpz";
-                    sha256 = "sha256-e1bXbebIh1Uck7MaHHDJTpe3Kk/FYqBjUweXsmjPZt0=";
+                    sha256 = "sha256-FzYOLPgqTyNADXhDHKXWhhF7bnNjz98HaQfLfIb9olk=";
                     recursiveHash = true;
                     downloadToTemp = true;
                     postFetch = ''
