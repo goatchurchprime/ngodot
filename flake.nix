@@ -32,6 +32,14 @@ outputs = { self, nixpkgs, android }: rec {
                 rev = "${version}-stable";
                 hash = "sha256-v9qKrPYQz4c+xkSu/2ru7ZE5EzKVyXhmrxyHZQkng2U=";
             };
+            
+            patches = (old.patches or []) ++ [
+            # https://github.com/godotengine/godot/pull/79143
+            (fetchpatch {
+                url = "https://github.com/clayjohn/godot/commit/df021b5063897eb4fe4a716aefc7096209ed29c6.patch";
+                hash = "sha256-KDmYWNivbsO7Rg3reMRUJVac025Incx7h5rh7KpVsnE=";
+            })
+            ];
 
             preBuild = ''
                 substituteInPlace editor/editor_node.cpp \
@@ -91,7 +99,7 @@ outputs = { self, nixpkgs, android }: rec {
     devShells.x86_64-linux.default = pkgs.mkShell {
         buildInputs = with pkgs; [
             packages.x86_64-linux.default
-            caddy
+            jdk11
             gradle
         ];
     };
