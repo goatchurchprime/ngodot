@@ -7,11 +7,20 @@ nixConfig = {
 };
 
 inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+inputs.android.url = "github:tadfisher/android-nixpkgs";
 
-outputs = { self, nixpkgs }: rec {
+outputs = { self, nixpkgs, android }: rec {
     system = "x86_64-linux";
     version = "4.1";
     pkgs = import nixpkgs { inherit system; config = { allowUnfree = true; android_sdk.accept_license = true; }; };
+
+    androidenv = android.sdk.x86_64-linux (sdkPkgs: with sdkPkgs; [
+        build-tools-33-0-2
+        cmdline-tools-latest
+        platform-tools
+        platforms-android-33
+    ]);
+
     
     packages.x86_64-linux.godot_4_hacked =
         with pkgs;
@@ -38,6 +47,7 @@ outputs = { self, nixpkgs }: rec {
                     --replace 'return get_data_dir().path_join(export_templates_folder)' 'printf("HITHERE\n"); return std::getenv("tunnelvr_EXPORT_TEMPLATES")'
             '';
         }); 
+
 
     packages.x86_64-linux.godot_4_android = 
         with pkgs;
@@ -67,19 +77,22 @@ outputs = { self, nixpkgs }: rec {
                 in
                     ''
                         wrapProgram $out/bin/godot4 \
-                            --set tunnelvr_ANDROID_SDK "${androidenv.androidPkgs_9_0.androidsdk}/libexec/android-sdk"\
+                            --set tunnelvr_ANDROID_SDK "${androidenv}/share/android-sdk"\
                             --set tunnelvr_EXPORT_TEMPLATES "${export-templates}/templates" \
-                            --set tunnelvr_DEBUG_KEY "${debugKey}"
+                            --set tunnelvr_DEBUG_KEY "${debugKey}" \
+                            --set GRADLE_OPTS "-Dorg.gradle.project.android.aapt2FromMavenOverride=${androidenv}/share/android-sdk/build-tools/33.0.2/aapt2"
                     '';
     };
 
 
+    #packages.x86_64-linux.default = packages.x86_64-linux.godot_4_hacked;
     packages.x86_64-linux.default = packages.x86_64-linux.godot_4_android;
 
     devShells.x86_64-linux.default = pkgs.mkShell {
         buildInputs = with pkgs; [
-            packages.x86_64-linux.godot_4_android
+            packages.x86_64-linux.default
             caddy
+            gradle
         ];
     };
 };
