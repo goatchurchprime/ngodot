@@ -1,6 +1,8 @@
 {
 description = "A flake for building Godot_4 with Android templates";
 
+# Instructions: normally do nix develop.  Or change version, set sha256s to "" and run to find them, nix flake update
+
 nixConfig = {
     extra-substituters = ["https://tunnelvr.cachix.org"];
     extra-trusted-public-keys = ["tunnelvr.cachix.org-1:IZUIF+ytsd6o+5F0wi45s83mHI+aQaFSoHJ3zHrc2G0="];
@@ -11,7 +13,7 @@ inputs.android.url = "github:tadfisher/android-nixpkgs";
 
 outputs = { self, nixpkgs, android }: rec {
     system = "x86_64-linux";
-    version = "4.1";
+    version = "4.1.1";
     pkgs = import nixpkgs { inherit system; config = { allowUnfree = true; android_sdk.accept_license = true; }; };
 
     androidenv = android.sdk.x86_64-linux (sdkPkgs: with sdkPkgs; [
@@ -30,16 +32,9 @@ outputs = { self, nixpkgs, android }: rec {
                 owner = "godotengine";
                 repo = "godot";
                 rev = "${version}-stable";
-                hash = "sha256-v9qKrPYQz4c+xkSu/2ru7ZE5EzKVyXhmrxyHZQkng2U=";
+                hash = "sha256-0CErsMTrBC/zYcabAtjYn8BWAZ1HxgozKdgiqdsn3q8=";
             };
             
-            patches = (old.patches or []) ++ [
-            # https://github.com/godotengine/godot/pull/79143
-            (fetchpatch {
-                url = "https://github.com/clayjohn/godot/commit/df021b5063897eb4fe4a716aefc7096209ed29c6.patch";
-                hash = "sha256-KDmYWNivbsO7Rg3reMRUJVac025Incx7h5rh7KpVsnE=";
-            })
-            ];
 
             preBuild = ''
                 substituteInPlace editor/editor_node.cpp \
@@ -73,7 +68,7 @@ outputs = { self, nixpkgs, android }: rec {
                 export-templates = fetchurl {
                     name = "godot_${version}";
                     url = "https://downloads.tuxfamily.org/godotengine/${version}/Godot_v${version}-stable_export_templates.tpz";
-                    sha256 = "sha256-FzYOLPgqTyNADXhDHKXWhhF7bnNjz98HaQfLfIb9olk=";
+                    sha256 = "sha256-v+L6uGCNoM6yVSEb3LfV/OUkGGSiTva4Jckahuvi8v8=";
                     recursiveHash = true;
                     downloadToTemp = true;
                     postFetch = ''
