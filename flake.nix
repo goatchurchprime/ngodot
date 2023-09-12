@@ -47,7 +47,14 @@ outputs = { self, nixpkgs, android }: rec {
                     --replace 'EDITOR_GET("export/android/debug_keystore")' 'std::getenv("tunnelvr_DEBUG_KEY")'
 
                 substituteInPlace editor/editor_paths.cpp \
-                    --replace 'return get_data_dir().path_join(export_templates_folder)' 'printf("HITHERE\n"); return std::getenv("tunnelvr_EXPORT_TEMPLATES")'
+                    --replace 'return get_data_dir().path_join(export_templates_folder)' 'printf("HITHEREE\n"); return std::getenv("tunnelvr_EXPORT_TEMPLATES")'
+
+                substituteInPlace core/extension/gdextension.cpp \
+                    --replace 'Vector<String> tags = E.split(".");' 'Vector<String> tags = E.split("."); print_line(vformat("----fullmatch /%s/", E));' \
+                    --replace 'all_tags_met = false;' 'all_tags_met = false; print_line(vformat("Missing tag /%s/", tag));'
+
+                substituteInPlace editor/plugins/gdextension_export_plugin.h \
+                    --replace 'PackedStringArray tags;' 'PackedStringArray tags; print_line(vformat("***arch** /%s/ \n", arch_tag));'
             '';
         }); 
 
