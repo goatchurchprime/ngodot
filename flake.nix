@@ -1,6 +1,7 @@
 {
 description = "A flake for building Godot_4 with Android templates";
 
+# --builders ssh-ng://nix-ssh@100.107.23.115
 # Instructions: normally do nix develop.  Or change version, set sha256s to "" and run to find them, nix flake update
 
 nixConfig = {
@@ -38,7 +39,7 @@ outputs = { self, nixpkgs, android }: rec {
 
             preBuild = ''
                 substituteInPlace editor/editor_node.cpp \
-                    --replace 'About Godot' 'NNing! Godot[v${version}]'
+                    --replace 'About Godot' 'NNing!2 Godot[v${version}]'
 
                 substituteInPlace platform/android/export/export_plugin.cpp \
                     --replace 'String sdk_path = EDITOR_GET("export/android/android_sdk_path")' 'String sdk_path = std::getenv("tunnelvr_ANDROID_SDK")'
@@ -47,14 +48,13 @@ outputs = { self, nixpkgs, android }: rec {
                     --replace 'EDITOR_GET("export/android/debug_keystore")' 'std::getenv("tunnelvr_DEBUG_KEY")'
 
                 substituteInPlace editor/editor_paths.cpp \
-                    --replace 'return get_data_dir().path_join(export_templates_folder)' 'printf("HITHEREE\n"); return std::getenv("tunnelvr_EXPORT_TEMPLATES")'
+                    --replace 'return get_data_dir().path_join(export_templates_folder)' 'return std::getenv("tunnelvr_EXPORT_TEMPLATES")'
 
-                substituteInPlace core/extension/gdextension.cpp \
-                    --replace 'Vector<String> tags = E.split(".");' 'Vector<String> tags = E.split("."); print_line(vformat("----fullmatch /%s/", E));' \
-                    --replace 'all_tags_met = false;' 'all_tags_met = false; print_line(vformat("Missing tag /%s/", tag));'
+                substituteInPlace modules/gltf/register_types.cpp \
+                    --replace 'EDITOR_DEF_RST("filesystem/import/blender/blender3_path", "");' 'EDITOR_DEF_RST("filesystem/import/blender/blender3_path", (std::getenv("GODOT_BLENDER3_PATH") != nullptr ? std::getenv("GODOT_BLENDER3_PATH") : "notset"));'
 
-                substituteInPlace editor/plugins/gdextension_export_plugin.h \
-                    --replace 'PackedStringArray tags;' 'PackedStringArray tags; print_line(vformat("***arch** /%s/ \n", arch_tag));'
+                substituteInPlace modules/gltf/register_types.cpp \
+                    --replace '"Blend file import' '"Blend file ribble'
             '';
         }); 
 
@@ -90,6 +90,7 @@ outputs = { self, nixpkgs, android }: rec {
                             --set tunnelvr_ANDROID_SDK "${androidenv}/share/android-sdk"\
                             --set tunnelvr_EXPORT_TEMPLATES "${export-templates}/templates" \
                             --set tunnelvr_DEBUG_KEY "${debugKey}" \
+                            --set GODOT_BLENDER3_PATH "/nix/store/12dn66dllxkp71yx48js7kv6fmddj188-blender-3.6.2/bin/" \
                             --set GRADLE_OPTS "-Dorg.gradle.project.android.aapt2FromMavenOverride=${androidenv}/share/android-sdk/build-tools/33.0.2/aapt2"
                     '';
     };
