@@ -1,6 +1,7 @@
 {
 description = "A flake for building Godot_4 with Android templates";
 
+# --builders ssh-ng://nix-ssh@100.107.23.115
 # Instructions: normally do nix develop.  Or change version, set sha256s to "" and run to find them, nix flake update
 
 nixConfig = {
@@ -13,7 +14,9 @@ inputs.android.url = "github:tadfisher/android-nixpkgs";
 
 outputs = { self, nixpkgs, android }: rec {
     system = "x86_64-linux";
-    version = "4.2";
+    version = "4.2.dev";
+    exporttemplateurl = "https://downloads.tuxfamily.org/godotengine/4.2/dev5/Godot_v4.2-dev5_export_templates.tpz";
+
     pkgs = import nixpkgs { inherit system; config = { allowUnfree = true; android_sdk.accept_license = true; }; };
 
     androidenv = android.sdk.x86_64-linux (sdkPkgs: with sdkPkgs; [
@@ -28,13 +31,12 @@ outputs = { self, nixpkgs, android }: rec {
         with pkgs;
         godot_4.overrideAttrs (old: {
             src = fetchFromGitHub {
-                name = "godot_${version}"; 
+                name = "godot_BBB${version}"; 
                 owner = "godotengine";
                 repo = "godot";
-                rev = "549fcce5f8f7beace3e5c90e9bbe4335d4fd1476";
-                hash = "";
+                rev = "e3e2528ba7f6e85ac167d687dd6312b35f558591";
+                hash = "sha256-oiWkw8V0o2IjDl+e0Cjh0n+sI2SWD4foG5xOZK7LSzA=";
             };
-            
 
             preBuild = ''
                 substituteInPlace editor/editor_node.cpp \
@@ -49,12 +51,8 @@ outputs = { self, nixpkgs, android }: rec {
                 substituteInPlace editor/editor_paths.cpp \
                     --replace 'return get_data_dir().path_join(export_templates_folder)' 'printf("HITHEREE\n"); return std::getenv("tunnelvr_EXPORT_TEMPLATES")'
 
-                substituteInPlace core/extension/gdextension.cpp \
-                    --replace 'Vector<String> tags = E.split(".");' 'Vector<String> tags = E.split("."); print_line(vformat("----fullmatch /%s/", E));' \
-                    --replace 'all_tags_met = false;' 'all_tags_met = false; print_line(vformat("Missing tag /%s/", tag));'
-
-                substituteInPlace editor/plugins/gdextension_export_plugin.h \
-                    --replace 'PackedStringArray tags;' 'PackedStringArray tags; print_line(vformat("***arch** /%s/ \n", arch_tag));'
+                substituteInPlace modules/gltf/register_types.cpp \
+                    --replace 'EDITOR_DEF_RST("filesystem/import/blender/blender3_path", "");' 'EDITOR_DEF_RST("filesystem/import/blender/blender3_path", (std::getenv("GODOT_BLENDER3_PATH") != nullptr ? std::getenv("GODOT_BLENDER3_PATH") : "notset"));'
             '';
         }); 
 
@@ -74,14 +72,14 @@ outputs = { self, nixpkgs, android }: rec {
             
                 export-templates = fetchurl {
                     name = "godot_${version}";
-                    url = "https://downloads.tuxfamily.org/godotengine/4.2/dev4/Godot_v4.2-dev4_export_templates.tpz";
-                    sha256 = "";
+                    url = exporttemplateurl;
+                    sha256 = "sha256-7Zl8YYO7D+dQUqd7oAHzIBnL0/RiflNJ1ss/zIizuSA=";
                     recursiveHash = true;
                     downloadToTemp = true;
                     postFetch = ''
                        ${unzip}/bin/unzip $downloadedFile -d ./
-                        mkdir -p $out/templates/${version}.stable
-                        mv ./templates/* $out/templates/${version}.stable
+                        mkdir -p $out/templates/${version}
+                        mv ./templates/* $out/templates/${version}
                     '';
                 };
                 in
@@ -90,6 +88,7 @@ outputs = { self, nixpkgs, android }: rec {
                             --set tunnelvr_ANDROID_SDK "${androidenv}/share/android-sdk"\
                             --set tunnelvr_EXPORT_TEMPLATES "${export-templates}/templates" \
                             --set tunnelvr_DEBUG_KEY "${debugKey}" \
+                            --set GODOT_BLENDER3_PATH "${pkgs.blender}/bin/" \
                             --set GRADLE_OPTS "-Dorg.gradle.project.android.aapt2FromMavenOverride=${androidenv}/share/android-sdk/build-tools/33.0.2/aapt2"
                     '';
     };
