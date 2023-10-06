@@ -15,7 +15,7 @@ inputs.android.url = "github:tadfisher/android-nixpkgs";
 outputs = { self, nixpkgs, android }: rec {
     system = "x86_64-linux";
     version = "4.2.dev";
-    exporttemplateurl = "https://downloads.tuxfamily.org/godotengine/4.2/dev5/Godot_v4.2-dev5_export_templates.tpz";
+    exporttemplateurl = "https://downloads.tuxfamily.org/godotengine/4.2/dev6/Godot_v4.2-dev6_export_templates.tpz";
 
     pkgs = import nixpkgs { inherit system; config = { allowUnfree = true; android_sdk.accept_license = true; }; };
 
@@ -34,8 +34,8 @@ outputs = { self, nixpkgs, android }: rec {
                 name = "godot_BBB${version}"; 
                 owner = "godotengine";
                 repo = "godot";
-                rev = "e3e2528ba7f6e85ac167d687dd6312b35f558591";
-                hash = "sha256-oiWkw8V0o2IjDl+e0Cjh0n+sI2SWD4foG5xOZK7LSzA=";
+                rev = "57a6813bb8bc2417ddef1058d422a91f0c9f753c";
+                hash = "sha256-VOWnyTf9s8fos/zSFFv4W0n0mWjJisFyeQl/bJtyBwE=";
             };
 
             preBuild = ''
@@ -63,6 +63,7 @@ outputs = { self, nixpkgs, android }: rec {
             name = "godot_4-with-android-sdk";
             nativeBuildInputs = [ makeWrapper ];
             paths = [ packages.x86_64-linux.godot_4_hacked ];
+            GODOT_VERSION_STATUS = "dev6";
             
             postBuild = let
                 debugKey = runCommand "debugKey" {} ''
