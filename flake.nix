@@ -99,7 +99,7 @@ outputs = { self, nixpkgs, android }: rec {
     devShells.x86_64-linux.default = pkgs.mkShell {
         buildInputs = with pkgs; [
             packages.x86_64-linux.default
-            jdk11
+            jdk17
             gradle
         ];
     };
