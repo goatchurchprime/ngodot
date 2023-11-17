@@ -15,7 +15,8 @@ inputs.android.url = "github:tadfisher/android-nixpkgs";
 outputs = { self, nixpkgs, android }: rec {
     system = "x86_64-linux";
     version = "4.2.beta";
-    exporttemplateurl = "https://downloads.tuxfamily.org/godotengine/4.2/beta4/Godot_v4.2-beta4_export_templates.tpz";
+    exporttemplateurl = "https://downloads.tuxfamily.org/godotengine/4.2/beta5/Godot_v4.2-beta5_export_templates.tpz";
+    exporttemplatehash = "sha256-MzrdokJn14+LCWV7wVYCb+Yr73n7PSlWbBBBlVPKGvs=";
 
     pkgs = import nixpkgs { inherit system; config = { allowUnfree = true; android_sdk.accept_license = true; }; };
 
@@ -34,19 +35,16 @@ outputs = { self, nixpkgs, android }: rec {
                 name = "godot_BBB${version}"; 
                 owner = "godotengine";
                 repo = "godot";
-                rev = "93cdacbb0a30f12b2f3f5e8e06b90149deeb554b";
-                hash = "sha256-V7byGXHKQKktSWFYCKgcAdEBVjSfAzWwCdn5xThb68s=";
+                rev = "4c96e9676b66d0cc9a25022b019b78f4c20ddc60";
+                hash = "sha256-3dwkZINT9DihUIScVLXDFONMEy7mAaoikW0GDNiskgM=";
             };
 
             preBuild = ''
                 substituteInPlace editor/editor_node.cpp \
-                    --replace 'About Godot' 'NNing! Godot[v${version}]'
+                    --replace 'About Godot' 'NNingo! Godot[v${version}]'
 
-                substituteInPlace platform/android/export/export_plugin.cpp \
-                    --replace 'String sdk_path = EDITOR_GET("export/android/android_sdk_path")' 'String sdk_path = std::getenv("tunnelvr_ANDROID_SDK")'
-
-                substituteInPlace platform/android/export/export_plugin.cpp \
-                    --replace 'EDITOR_GET("export/android/debug_keystore")' 'std::getenv("tunnelvr_DEBUG_KEY")'
+                substituteInPlace platform/android/export/export.cpp \
+                    --replace 'EDITOR_DEF("export/android/debug_keystore", "")' 'EDITOR_DEF("export/android/debug_keystore", OS::get_singleton()->get_environment("tunnelvr_DEBUG_KEY"))'
 
                 substituteInPlace editor/editor_paths.cpp \
                     --replace 'return get_data_dir().path_join(export_templates_folder)' 'printf("HITHEREE\n"); return std::getenv("tunnelvr_EXPORT_TEMPLATES")'
@@ -74,7 +72,7 @@ outputs = { self, nixpkgs, android }: rec {
                 export-templates = fetchurl {
                     name = "godot_${version}";
                     url = exporttemplateurl;
-                    sha256 = "sha256-tPenjTBKaB3y1vEyFZvDC+DoCo3+XhM2HBGe/BPvmC4=";
+                    sha256 = exporttemplatehash;
                     recursiveHash = true;
                     downloadToTemp = true;
                     postFetch = ''
@@ -86,7 +84,7 @@ outputs = { self, nixpkgs, android }: rec {
                 in
                     ''
                         wrapProgram $out/bin/godot4 \
-                            --set tunnelvr_ANDROID_SDK "${androidenv}/share/android-sdk"\
+                            --set ANDROID_HOME "${androidenv}/share/android-sdk"\
                             --set tunnelvr_EXPORT_TEMPLATES "${export-templates}/templates" \
                             --set tunnelvr_DEBUG_KEY "${debugKey}" \
                             --set GODOT_BLENDER3_PATH "${pkgs.blender}/bin/" \
