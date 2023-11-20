@@ -4,6 +4,8 @@ description = "A flake for building Godot_4 with Android templates";
 # --builders ssh-ng://nix-ssh@100.107.23.115
 # Instructions: normally do nix develop.  Or change version, set sha256s to "" and run to find them, nix flake update
 
+# ad72de508363ca8d10c6b148be44a02cdf12be13
+
 nixConfig = {
     extra-substituters = ["https://tunnelvr.cachix.org"];
     extra-trusted-public-keys = ["tunnelvr.cachix.org-1:IZUIF+ytsd6o+5F0wi45s83mHI+aQaFSoHJ3zHrc2G0="];
