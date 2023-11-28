@@ -4,8 +4,6 @@ description = "A flake for building Godot_4 with Android templates";
 # --builders ssh-ng://nix-ssh@100.107.23.115
 # Instructions: normally do nix develop.  Or change version, set sha256s to "" and run to find them, nix flake update
 
-# ad72de508363ca8d10c6b148be44a02cdf12be13
-
 nixConfig = {
     extra-substituters = ["https://tunnelvr.cachix.org"];
     extra-trusted-public-keys = ["tunnelvr.cachix.org-1:IZUIF+ytsd6o+5F0wi45s83mHI+aQaFSoHJ3zHrc2G0="];
@@ -16,9 +14,9 @@ inputs.android.url = "github:tadfisher/android-nixpkgs";
 
 outputs = { self, nixpkgs, android }: rec {
     system = "x86_64-linux";
-    version = "4.2.beta";
-    exporttemplateurl = "https://downloads.tuxfamily.org/godotengine/4.2/beta5/Godot_v4.2-beta5_export_templates.tpz";
-    exporttemplatehash = "sha256-MzrdokJn14+LCWV7wVYCb+Yr73n7PSlWbBBBlVPKGvs=";
+    version = "4.2.rc";
+    exporttemplateurl = "https://downloads.tuxfamily.org/godotengine/4.2/rc1/Godot_v4.2-rc1_export_templates.tpz";
+    exporttemplatehash = "sha256-UPujMhdhhAd9Vrzk0SudwIzGbHejm1HTyMbN0776WOo=";
 
     pkgs = import nixpkgs { inherit system; config = { allowUnfree = true; android_sdk.accept_license = true; }; };
 
@@ -37,8 +35,8 @@ outputs = { self, nixpkgs, android }: rec {
                 name = "godot_BBB${version}"; 
                 owner = "godotengine";
                 repo = "godot";
-                rev = "4c96e9676b66d0cc9a25022b019b78f4c20ddc60";
-                hash = "sha256-3dwkZINT9DihUIScVLXDFONMEy7mAaoikW0GDNiskgM=";
+                rev = "ad72de508363ca8d10c6b148be44a02cdf12be13";
+                hash = "sha256-6iSZ+30EuhGIS7FPOicIOO8ZdYgMD7K/6X1lq/M09Ec=";
             };
 
             preBuild = ''
