@@ -2,7 +2,7 @@
 description = "A flake for building Godot_4 with Android templates";
 
 # --builders ssh-ng://nix-ssh@100.107.23.115
-# Instructions: normally do nix develop.  Or change version, set sha256s to "" and run to find them, nix flake update
+# Instructions: normally do nix develop.  Or change version, set both sha256s to "" (incl export templates) and run to find them, nix flake update
 
 nixConfig = {
     extra-substituters = ["https://tunnelvr.cachix.org"];
@@ -14,9 +14,8 @@ inputs.android.url = "github:tadfisher/android-nixpkgs";
 
 outputs = { self, nixpkgs, android }: rec {
     system = "x86_64-linux";
-    version = "4.2.dev";
-    exporttemplateurl = "https://downloads.tuxfamily.org/godotengine/4.2/dev6/Godot_v4.2-dev6_export_templates.tpz";
-
+    version = "4.3.dev";
+    exporttemplateurl = "https://downloads.tuxfamily.org/godotengine/4.3/dev2/Godot_v4.3-dev2_export_templates.tpz";
     pkgs = import nixpkgs { inherit system; config = { allowUnfree = true; android_sdk.accept_license = true; }; };
 
     androidenv = android.sdk.x86_64-linux (sdkPkgs: with sdkPkgs; [
@@ -34,8 +33,8 @@ outputs = { self, nixpkgs, android }: rec {
                 name = "godot_BBB${version}"; 
                 owner = "godotengine";
                 repo = "godot";
-                rev = "57a6813bb8bc2417ddef1058d422a91f0c9f753c";
-                hash = "sha256-VOWnyTf9s8fos/zSFFv4W0n0mWjJisFyeQl/bJtyBwE=";
+                rev = "352434668923978f54f2236f20116fc96ebc9173";
+                hash = "sha256-TsL0/VdLtnq56sAE6pD6zG+P4pIqddD43wG98tdkORA=";
             };
 
             preBuild = ''
@@ -74,7 +73,7 @@ outputs = { self, nixpkgs, android }: rec {
                 export-templates = fetchurl {
                     name = "godot_${version}";
                     url = exporttemplateurl;
-                    sha256 = "sha256-7Zl8YYO7D+dQUqd7oAHzIBnL0/RiflNJ1ss/zIizuSA=";
+                    sha256 = "sha256-IUFdkQjmA8kZwUsUOk2mEisFLOtQHRRNDxqg5LGUFR0=";
                     recursiveHash = true;
                     downloadToTemp = true;
                     postFetch = ''
