@@ -19,10 +19,10 @@ outputs = { self, nixpkgs, android }: rec {
     pkgs = import nixpkgs { inherit system; config = { allowUnfree = true; android_sdk.accept_license = true; }; };
 
     androidenv = android.sdk.x86_64-linux (sdkPkgs: with sdkPkgs; [
-        build-tools-33-0-2
+        build-tools-34-0-0
         cmdline-tools-latest
         platform-tools
-        platforms-android-33
+        platforms-android-34
     ]);
 
     
@@ -46,6 +46,9 @@ outputs = { self, nixpkgs, android }: rec {
 
                 substituteInPlace platform/android/export/export_plugin.cpp \
                     --replace 'EDITOR_GET("export/android/debug_keystore")' 'std::getenv("tunnelvr_DEBUG_KEY")'
+
+                substituteInPlace platform/android/export/export_plugin.cpp \
+                    --replace 'EDITOR_GET("export/android/java_sdk_path")' 'std::getenv("tunnelvr_JAVA_SDK_PATH")'
 
                 substituteInPlace editor/editor_paths.cpp \
                     --replace 'return get_data_dir().path_join(export_templates_folder)' 'printf("HITHEREE\n"); return std::getenv("tunnelvr_EXPORT_TEMPLATES")'
@@ -83,13 +86,16 @@ outputs = { self, nixpkgs, android }: rec {
                     '';
                 };
                 in
-                    ''
+                    ''  
                         wrapProgram $out/bin/godot4 \
+                            --set ANDROID_HOME "${androidenv}/share/android-sdk"\
+                            --set JAVA_HOME "${pkgs.jdk17}/lib/openjdk"\
                             --set tunnelvr_ANDROID_SDK "${androidenv}/share/android-sdk"\
+                            --set tunnelvr_JAVA_SDK_PATH "${pkgs.jdk17}/lib/openjdk"\
                             --set tunnelvr_EXPORT_TEMPLATES "${export-templates}/templates" \
                             --set tunnelvr_DEBUG_KEY "${debugKey}" \
                             --set GODOT_BLENDER3_PATH "${pkgs.blender}/bin/" \
-                            --set GRADLE_OPTS "-Dorg.gradle.project.android.aapt2FromMavenOverride=${androidenv}/share/android-sdk/build-tools/33.0.2/aapt2"
+                            --set GRADLE_OPTS "-Dorg.gradle.project.android.aapt2FromMavenOverride=${androidenv}/share/android-sdk/build-tools/34.0.0/aapt2"
                     '';
     };
 
