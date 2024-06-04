@@ -14,8 +14,8 @@ inputs.android.url = "github:tadfisher/android-nixpkgs";
 
 outputs = { self, nixpkgs, android }: rec {
     system = "x86_64-linux";
-    version = "4.3.dev";
-    exporttemplateurl = "https://downloads.tuxfamily.org/godotengine/4.3/dev6/Godot_v4.3-dev6_export_templates.tpz";
+    version = "4.3.beta";
+    exporttemplateurl = "https://downloads.tuxfamily.org/godotengine/4.3/beta1/Godot_v4.3-beta1_export_templates.tpz";
     pkgs = import nixpkgs { inherit system; config = { allowUnfree = true; android_sdk.accept_license = true; }; };
 
     androidenv = android.sdk.x86_64-linux (sdkPkgs: with sdkPkgs; [
@@ -32,8 +32,8 @@ outputs = { self, nixpkgs, android }: rec {
                 name = "godot_BBB${version}"; 
                 owner = "godotengine";
                 repo = "godot";
-                rev = "64520fe6741d8ec3c55e0c9618d3fadcda949f63";
-                hash = "sha256-mJrGdvLIA5ubTQNAp3ggEsuoUUorJffIlhn7UlsAYtM=";
+                rev = "a4f2ea91a1bd18f70a43ff4c1377db49b56bc3f0";
+                hash = "sha256-1hV4XSPwG1pKkf8S3FuLnpGnyYdcQFJzwa6xnKzF9yE=";
             };
 
             preBuild = ''
@@ -64,7 +64,7 @@ outputs = { self, nixpkgs, android }: rec {
             name = "godot_4-with-android-sdk";
             nativeBuildInputs = [ makeWrapper ];
             paths = [ packages.x86_64-linux.godot_4_hacked ];
-            GODOT_VERSION_STATUS = "dev6";
+            GODOT_VERSION_STATUS = "beta1";
             
             postBuild = let
                 debugKey = runCommand "debugKey" {} ''
@@ -75,7 +75,7 @@ outputs = { self, nixpkgs, android }: rec {
                 export-templates = fetchurl {
                     name = "godot_${version}";
                     url = exporttemplateurl;
-                    sha256 = "sha256-OohfplpMCjO5kobAJzShjqSYgsOHCDuuJoh4wYecpgU=";
+                    sha256 = "";
                     recursiveHash = true;
                     downloadToTemp = true;
                     postFetch = ''
