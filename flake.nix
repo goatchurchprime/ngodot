@@ -15,7 +15,8 @@ inputs.android.url = "github:tadfisher/android-nixpkgs";
 outputs = { self, nixpkgs, android }: rec {
     system = "x86_64-linux";
     version = "4.3.beta";
-    exporttemplateurl = "https://downloads.tuxfamily.org/godotengine/4.3/beta1/Godot_v4.3-beta1_export_templates.tpz";
+    #exporttemplateurl = "https://downloads.tuxfamily.org/godotengine/4.3/beta1/Godot_v4.3-beta1_export_templates.tpz";
+    exporttemplateurl = "https://github.com/godotengine/godot-builds/releases/download/4.3-beta1/Godot_v4.3-beta1_export_templates.tpz";
     pkgs = import nixpkgs { inherit system; config = { allowUnfree = true; android_sdk.accept_license = true; }; };
 
     androidenv = android.sdk.x86_64-linux (sdkPkgs: with sdkPkgs; [
@@ -75,7 +76,7 @@ outputs = { self, nixpkgs, android }: rec {
                 export-templates = fetchurl {
                     name = "godot_${version}";
                     url = exporttemplateurl;
-                    sha256 = "";
+                    sha256 = "sha256-l4EAW6aR5u+2jVWQ7N3tPa9kF8N+eyhmfCnjtVwqPDo=";
                     recursiveHash = true;
                     downloadToTemp = true;
                     postFetch = ''
@@ -88,7 +89,7 @@ outputs = { self, nixpkgs, android }: rec {
                     ''  
                         wrapProgram $out/bin/godot4 \
                             --set ANDROID_HOME "${androidenv}/share/android-sdk"\
-                            --set JAVA_HOME "${pkgs.jdk17}/lib/openjdk"\
+                            --set JAVA_HOME "${pkgs.jdk17}/lhttps://github.com/godotengine/godot-builds/releases/download/4.3-beta1/Godot_v4.3-beta1_export_templates.tpzib/openjdk"\
                             --set tunnelvr_ANDROID_SDK "${androidenv}/share/android-sdk"\
                             --set tunnelvr_JAVA_SDK_PATH "${pkgs.jdk17}/lib/openjdk"\
                             --set tunnelvr_EXPORT_TEMPLATES "${export-templates}/templates" \
