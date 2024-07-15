@@ -15,8 +15,7 @@ inputs.android.url = "github:tadfisher/android-nixpkgs";
 outputs = { self, nixpkgs, android }: rec {
     system = "x86_64-linux";
     version = "4.3.beta";
-    #exporttemplateurl = "https://downloads.tuxfamily.org/godotengine/4.3/beta1/Godot_v4.3-beta1_export_templates.tpz";
-    exporttemplateurl = "https://github.com/godotengine/godot-builds/releases/download/4.3-beta1/Godot_v4.3-beta1_export_templates.tpz";
+    exporttemplateurl = "https://downloads.tuxfamily.org/godotengine/4.3/beta2/Godot_v4.3-beta2_export_templates.tpz";
     pkgs = import nixpkgs { inherit system; config = { allowUnfree = true; android_sdk.accept_license = true; }; };
 
     androidenv = android.sdk.x86_64-linux (sdkPkgs: with sdkPkgs; [
@@ -33,8 +32,8 @@ outputs = { self, nixpkgs, android }: rec {
                 name = "godot_BBB${version}"; 
                 owner = "godotengine";
                 repo = "godot";
-                rev = "a4f2ea91a1bd18f70a43ff4c1377db49b56bc3f0";
-                hash = "sha256-1hV4XSPwG1pKkf8S3FuLnpGnyYdcQFJzwa6xnKzF9yE=";
+                rev = "b75f0485ba15951b87f1d9a2d8dd0fcd55e178e4";
+                hash = "sha256-IVWRf29s4ig+VMl4s/kHjwjFrZEl72q7rmynhHocMIM=";
             };
 
             preBuild = ''
@@ -65,7 +64,7 @@ outputs = { self, nixpkgs, android }: rec {
             name = "godot_4-with-android-sdk";
             nativeBuildInputs = [ makeWrapper ];
             paths = [ packages.x86_64-linux.godot_4_hacked ];
-            GODOT_VERSION_STATUS = "beta1";
+            GODOT_VERSION_STATUS = "beta2";
             
             postBuild = let
                 debugKey = runCommand "debugKey" {} ''
@@ -76,7 +75,7 @@ outputs = { self, nixpkgs, android }: rec {
                 export-templates = fetchurl {
                     name = "godot_${version}";
                     url = exporttemplateurl;
-                    sha256 = "sha256-l4EAW6aR5u+2jVWQ7N3tPa9kF8N+eyhmfCnjtVwqPDo=";
+                    sha256 = "sha256-CdpJ7ZMEydGCDNXDWLePYT3+XQylVfFRkrCh8NwGxEk=";
                     recursiveHash = true;
                     downloadToTemp = true;
                     postFetch = ''
