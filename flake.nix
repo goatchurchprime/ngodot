@@ -15,7 +15,7 @@ inputs.android.url = "github:tadfisher/android-nixpkgs";
 outputs = { self, nixpkgs, android }: rec {
     system = "x86_64-linux";
     version = "4.3.beta";
-    exporttemplateurl = "https://downloads.tuxfamily.org/godotengine/4.3/beta3/Godot_v4.3-beta3_export_templates.tpz";
+    exporttemplateurl = "https://downloads.tuxfamily.org/godotengine/4.3/rc1/Godot_v4.3-rc1_export_templates.tpz";
     pkgs = import nixpkgs { inherit system; config = { allowUnfree = true; android_sdk.accept_license = true; }; };
 
     androidenv = android.sdk.x86_64-linux (sdkPkgs: with sdkPkgs; [
@@ -32,8 +32,8 @@ outputs = { self, nixpkgs, android }: rec {
                 name = "godot_BBB${version}"; 
                 owner = "godotengine";
                 repo = "godot";
-                rev = "82cedc83c9069125207c128f9a07ce3d82c317cc";
-                hash = "sha256-yy6p8H1N8j2OtpLVh7h2hjKsEY2iDDalENkIBlIIX7Q=";
+                rev = "e343dbbcc1030f04dc5833f1c19d267a17332ca9";
+                hash = "sha256-ZFRee/4sBui97V6dtqSBOKhOUEOy3I3mzpKvFa3Zxjk=";
             };
 
             preBuild = ''
@@ -75,7 +75,7 @@ outputs = { self, nixpkgs, android }: rec {
                 export-templates = fetchurl {
                     name = "godot_${version}";
                     url = exporttemplateurl;
-                    sha256 = "sha256-vozoT+VaHiU+/+Ozita7HSOc31iavzF4TUFguMoR3WU=";
+                    sha256 = "sha256-h+uGHAfk5O12R7kkkBnYDBLVaYakoTJFtW7PeA4QCxw=";
                     recursiveHash = true;
                     downloadToTemp = true;
                     postFetch = ''
