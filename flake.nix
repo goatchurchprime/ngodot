@@ -15,7 +15,8 @@ inputs.android.url = "github:tadfisher/android-nixpkgs";
 outputs = { self, nixpkgs, android }: rec {
     system = "x86_64-linux";
     version = "4.3.rc";
-    exporttemplateurl = "https://downloads.tuxfamily.org/godotengine/4.3/rc1/Godot_v4.3-rc1_export_templates.tpz";
+    exporttemplateurl = "https://downloads.tuxfamily.org/godotengine/4.3/rc2/Godot_v4.3-rc2_export_templates.tpz";
+    exporttemplatesha256 = "sha256-TLzCXmdgdV5R5s9YT976ZrP1zf9s4DE9t2XjwHd7+mI=";
     pkgs = import nixpkgs { inherit system; config = { allowUnfree = true; android_sdk.accept_license = true; }; };
 
     androidenv = android.sdk.x86_64-linux (sdkPkgs: with sdkPkgs; [
@@ -32,8 +33,8 @@ outputs = { self, nixpkgs, android }: rec {
                 name = "godot_BBB${version}"; 
                 owner = "godotengine";
                 repo = "godot";
-                rev = "e343dbbcc1030f04dc5833f1c19d267a17332ca9";
-                hash = "sha256-ZFRee/4sBui97V6dtqSBOKhOUEOy3I3mzpKvFa3Zxjk=";
+                rev = "3978628c6cc1227250fc6ed45c8d854d24c30c30";
+                hash = "sha256-NovdSjwA2h7I7HpY57ZxCXwBh9KBU0xKQkigmQAx04A=";
             };
 
             preBuild = ''
@@ -64,7 +65,7 @@ outputs = { self, nixpkgs, android }: rec {
             name = "godot_4-with-android-sdk";
             nativeBuildInputs = [ makeWrapper ];
             paths = [ packages.x86_64-linux.godot_4_hacked ];
-            GODOT_VERSION_STATUS = "beta2";
+            GODOT_VERSION_STATUS = "rc2";
             
             postBuild = let
                 debugKey = runCommand "debugKey" {} ''
@@ -75,7 +76,7 @@ outputs = { self, nixpkgs, android }: rec {
                 export-templates = fetchurl {
                     name = "godot_${version}";
                     url = exporttemplateurl;
-                    sha256 = "sha256-x7aN4zuly8dK2IlQTM8ghayJ6HFWELYKbDiGvju5+ZA=";
+                    sha256 = exporttemplatesha256;
                     recursiveHash = true;
                     downloadToTemp = true;
                     postFetch = ''
