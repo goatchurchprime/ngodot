@@ -39,22 +39,19 @@ outputs = { self, nixpkgs, android }: rec {
 
             preBuild = ''
                 substituteInPlace editor/editor_node.cpp \
-                    --replace 'About Godot' 'NNing! Godot[v${version}]'
+                    --replace-fail 'About Godot' 'NNNing! Godot[v${version}]'
 
                 substituteInPlace platform/android/export/export_plugin.cpp \
-                    --replace 'String sdk_path = EDITOR_GET("export/android/android_sdk_path")' 'String sdk_path = std::getenv("tunnelvr_ANDROID_SDK")'
-
-                substituteInPlace platform/android/export/export_plugin.cpp \
-                    --replace 'EDITOR_GET("export/android/debug_keystore")' 'std::getenv("tunnelvr_DEBUG_KEY")'
-
-                substituteInPlace platform/android/export/export_plugin.cpp \
-                    --replace 'EDITOR_GET("export/android/java_sdk_path")' 'std::getenv("tunnelvr_JAVA_SDK_PATH")'
+                    --replace-fail 'EDITOR_GET("export/android/debug_keystore")' 'std::getenv("tunnelvr_DEBUG_KEY")'
 
                 substituteInPlace editor/editor_paths.cpp \
-                    --replace 'return get_data_dir().path_join(export_templates_folder)' 'printf("HITHEREE\n"); return std::getenv("tunnelvr_EXPORT_TEMPLATES")'
+                    --replace-fail 'return get_data_dir().path_join("keystores/debug.keystore")' 'return std::getenv("tunnelvr_DEBUG_KEY")'
+
+                substituteInPlace editor/editor_paths.cpp \
+                    --replace-fail 'return get_data_dir().path_join(export_templates_folder)' 'printf("HITHEREE\n"); return std::getenv("tunnelvr_EXPORT_TEMPLATES")'
 
                 substituteInPlace modules/gltf/register_types.cpp \
-                    --replace 'EDITOR_DEF_RST("filesystem/import/blender/blender3_path", "");' 'EDITOR_DEF_RST("filesystem/import/blender/blender3_path", (std::getenv("GODOT_BLENDER3_PATH") != nullptr ? std::getenv("GODOT_BLENDER3_PATH") : "notset"));'
+                    --replace-fail 'EDITOR_GET("filesystem/import/blender/blender_path");' 'std::getenv("tunnelvr_BLENDER3_PATH");'
             '';
         }); 
 
@@ -89,12 +86,10 @@ outputs = { self, nixpkgs, android }: rec {
                     ''  
                         wrapProgram $out/bin/godot4 \
                             --set ANDROID_HOME "${androidenv}/share/android-sdk"\
-                            --set JAVA_HOME "${pkgs.jdk17}/lhttps://github.com/godotengine/godot-builds/releases/download/4.3-beta1/Godot_v4.3-beta1_export_templates.tpzib/openjdk"\
-                            --set tunnelvr_ANDROID_SDK "${androidenv}/share/android-sdk"\
-                            --set tunnelvr_JAVA_SDK_PATH "${pkgs.jdk17}/lib/openjdk"\
+                            --set JAVA_HOME "${pkgs.jdk17}/lib/openjdk"\
                             --set tunnelvr_EXPORT_TEMPLATES "${export-templates}/templates" \
                             --set tunnelvr_DEBUG_KEY "${debugKey}" \
-                            --set GODOT_BLENDER3_PATH "${pkgs.blender}/bin/" \
+                            --set tunnelvr_BLENDER3_PATH "${pkgs.blender}/bin/" \
                             --set GRADLE_OPTS "-Dorg.gradle.project.android.aapt2FromMavenOverride=${androidenv}/share/android-sdk/build-tools/34.0.0/aapt2"
                     '';
     };
