@@ -47,8 +47,8 @@ outputs = { self, nixpkgs, android }: rec {
                 substituteInPlace editor/editor_paths.cpp \
                     --replace-fail 'return get_data_dir().path_join("keystores/debug.keystore")' 'return std::getenv("tunnelvr_DEBUG_KEY")'
 
-                substituteInPlace editor/editor_paths.cpp \
-                    --replace-fail 'return get_data_dir().path_join(export_templates_folder)' 'printf("HITHEREE\n"); return std::getenv("tunnelvr_EXPORT_TEMPLATES")'
+                substituteInPlace servers/register_server_types.cpp \
+                    --replace-fail 'GDREGISTER_CLASS(AudioStreamMicrophone);' 'GDREGISTER_CLASS(AudioStreamMicrophone);GDREGISTER_CLASS(AudioStreamPlaybackMicrophone);'
 
                 substituteInPlace modules/gltf/register_types.cpp \
                     --replace-fail 'EDITOR_GET("filesystem/import/blender/blender_path");' 'std::getenv("tunnelvr_BLENDER3_PATH");'
