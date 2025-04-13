@@ -15,10 +15,9 @@ inputs.android.url = "github:tadfisher/android-nixpkgs";
 outputs = { self, nixpkgs, android }: rec {
     system = "x86_64-linux";
     version = "4.3.stable";
-    exporttemplateurl = "https://downloads.tuxfamily.org/godotengine/4.3/Godot_v4.3-stable_export_templates.tpz";
+    exporttemplateurl = "https://github.com/godotengine/godot-builds/releases/download/4.3-stable/Godot_v4.3-stable_export_templates.tpz";
     exporttemplatesha256 = "sha256-c3vvaJAZKU4cEOdbg4cQEb3+OUFoEQurX8g9Qi4V+Sg=";
     pkgs = import nixpkgs { inherit system; config = { allowUnfree = true; android_sdk.accept_license = true; }; };
-
     androidenv = android.sdk.x86_64-linux (sdkPkgs: with sdkPkgs; [
         build-tools-34-0-0
         cmdline-tools-latest
