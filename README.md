@@ -1,5 +1,4 @@
-
-# ngodot
+# nix-godot-android
 
 A nix flake that wrap Godot with the Android runtime and Gradle (VR ready).
 
@@ -9,8 +8,8 @@ Create a file `flake.nix` at the root of your project, you can then enter the de
 
 ```
 {
-  description = "Example usage of ngodot";
-  inputs.nix-godot-android.url = "github:goatchurchprime/ngodot";
+  description = "Example usage of nix-godot-android";
+  inputs.nix-godot-android.url = "github:jahkosha/nix-godot-android";
   inputs.nixpkgs.url = "nixpkgs/nixos-unstable";
 
   outputs = { self, nixpkgs, nix-godot-android }: {
