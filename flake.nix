@@ -2,14 +2,14 @@
 {
 description = "A flake for building Godot 4 with Android templates and Gradle";
 
-inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
 inputs.android.url = "github:tadfisher/android-nixpkgs";
 
 outputs = { self, nixpkgs, android }: rec {
     system = "x86_64-linux";
-    version = "4.4.1.stable";
-    exporttemplateurl = "https://github.com/godotengine/godot-builds/releases/download/4.4.1-stable/Godot_v4.4.1-stable_export_templates.tpz";
-    exporttemplatesha256 = "sha256-TjtUmI3WxCS6YfEmJSc8Gmk9bja4vyhRrW0Nb1MGt5w=";
+    version = "4.5.dev";
+    exporttemplateurl = "https://github.com/godotengine/godot-builds/releases/download/4.5-dev4/Godot_v4.5-dev4_export_templates.tpz";
+    exporttemplatesha256 = "";
     pkgs = import nixpkgs { inherit system; config = { allowUnfree = true; android_sdk.accept_license = true; }; };
 
     androidenv = android.sdk.x86_64-linux (sdkPkgs: with sdkPkgs; [
@@ -21,13 +21,13 @@ outputs = { self, nixpkgs, android }: rec {
 
     packages.x86_64-linux.godot_4_wrapped =
         with pkgs;
-        godot_4_4.overrideAttrs (old: {
+        godot_4.overrideAttrs (old: {
             src = fetchFromGitHub {
                 name = "godot_${version}_wrapped";
                 owner = "godotengine";
                 repo = "godot";
-                rev = "49a5bc7b616bd04689a2c89e89bda41f50241464";
-                hash = "sha256-BBlKKsVURPYqKuxrwMbDD7tKHDfvihxbhXFnHWUyuDk=";
+                rev = "28089c40c13597bf908802c61352c6fffe0a4465";
+                hash = "sha256-zmoop0vk2e+PVQZC+OQXwDJ6iIIY3TjhhVYEJjNvrCA=";
             };
 
             preBuild = ''
