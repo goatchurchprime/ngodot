@@ -7,9 +7,9 @@ inputs.android.url = "github:tadfisher/android-nixpkgs";
 
 outputs = { self, nixpkgs, android }: rec {
     system = "x86_64-linux";
-    version = "4.5.dev";
-    exporttemplateurl = "https://github.com/godotengine/godot-builds/releases/download/4.5-dev4/Godot_v4.5-dev4_export_templates.tpz";
-    exporttemplatesha256 = "sha256-efUfpCW20wyy55BT+crGjDTXO9ZQlGqtbrXC13yMfEU=";
+    version = "4.5.beta";
+    exporttemplateurl = "https://github.com/godotengine/godot-builds/releases/download/4.5-beta3/Godot_v4.5-beta3_export_templates.tpz";
+    exporttemplatesha256 = "sha256-119w10Ab2T7lBu0rIoSt36rVxyEIxDqznNGuwH4HMCs=";
     pkgs = import nixpkgs { inherit system; config = { allowUnfree = true; android_sdk.accept_license = true; }; };
 
     androidenv = android.sdk.x86_64-linux (sdkPkgs: with sdkPkgs; [
@@ -26,25 +26,18 @@ outputs = { self, nixpkgs, android }: rec {
                 name = "godot_${version}_wrapped";
                 owner = "godotengine";
                 repo = "godot";
-                rev = "209a446e3657e6fd736b9b7589b94cbdaad2d854";
-                hash = "sha256-EuddxyMXTjTNtfzbbBBwtrVF+0jZL7vKf5q6RJelkr0=";
+                rev = "4d1f26e1fd1fa46f2223fe0b6ac300744bf79b88";
+                hash = "sha256-8d29UBP6UJEEo+e/srEBIy8ctSaXM0eWxjVeyTmZiRQ=";
             };
 
             preBuild = ''
-                substituteInPlace editor/editor_node.cpp \
-                    --replace-fail 'About Godot' 'Godot[v${version}] (nix-godot-android)'
+                substituteInPlace editor/editor_node.cpp --replace-fail 'About Godot' 'Godot[v${version}] (nix-godot-android)'
 
-                substituteInPlace platform/android/export/export_plugin.cpp \
-                    --replace-fail 'EDITOR_GET("export/android/debug_keystore")' 'std::getenv("GODOT_DEBUG_KEY")'
+                substituteInPlace editor/file_system/editor_paths.cpp --replace-fail 'return "assets://keystores/debug.keystore"' 'return std::getenv("GODOT_DEBUG_KEY")'
 
-                substituteInPlace editor/editor_paths.cpp \
-                    --replace-fail 'return get_data_dir().path_join("keystores/debug.keystore")' 'return std::getenv("GODOT_DEBUG_KEY")'
+                substituteInPlace editor/file_system/editor_paths.cpp --replace-fail 'return get_data_dir().path_join(export_templates_folder)' 'return std::getenv("GODOT_EXPORT_TEMPLATES")'
 
-                substituteInPlace editor/editor_paths.cpp \
-                    --replace-fail 'return get_data_dir().path_join(export_templates_folder)' 'return std::getenv("GODOT_EXPORT_TEMPLATES")'
-
-                substituteInPlace modules/gltf/register_types.cpp \
-                    --replace-fail 'EDITOR_GET("filesystem/import/blender/blender_path");' 'std::getenv("GODOT_BLENDER3_PATH");'
+                substituteInPlace modules/gltf/register_types.cpp --replace-fail 'EDITOR_GET("filesystem/import/blender/blender_path");' 'std::getenv("GODOT_BLENDER3_PATH");'
             '';
         });
 
