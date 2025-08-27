@@ -24,8 +24,8 @@ nixConfig = {
     extra-trusted-public-keys = ["tunnelvr.cachix.org-1:IZUIF+ytsd6o+5F0wi45s83mHI+aQaFSoHJ3zHrc2G0="];
 };
 
-inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-inputs.android.url = "github:tadfisher/android-nixpkgs/stable";
+inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+inputs.android.url = "github:tadfisher/android-nixpkgs";
 
 outputs = { self, nixpkgs, android }: rec {
     system = "x86_64-linux";
