@@ -13,10 +13,10 @@ outputs = { self, nixpkgs, android }: rec {
     pkgs = import nixpkgs { inherit system; config = { allowUnfree = true; android_sdk.accept_license = true; }; };
 
     androidenv = android.sdk.x86_64-linux (sdkPkgs: with sdkPkgs; [
-        build-tools-34-0-0
+        build-tools-35-0-0
         cmdline-tools-latest
         platform-tools
-        platforms-android-34
+        platforms-android-35
     ]);
 
     packages.x86_64-linux.godot_4_wrapped =
@@ -74,7 +74,7 @@ outputs = { self, nixpkgs, android }: rec {
                             --set GODOT_EXPORT_TEMPLATES "${export-templates}/templates" \
                             --set GODOT_DEBUG_KEY "${debugKey}" \
                             --set GODOT_BLENDER3_PATH "${pkgs.blender}/bin/" \
-                            --set GRADLE_OPTS "-Dorg.gradle.project.android.aapt2FromMavenOverride=${androidenv}/share/android-sdk/build-tools/34.0.0/aapt2"
+                            --set GRADLE_OPTS "-Dorg.gradle.project.android.aapt2FromMavenOverride=${androidenv}/share/android-sdk/build-tools/35.0.0/aapt2"
                     '';
     };
 
