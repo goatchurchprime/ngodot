@@ -7,9 +7,9 @@ inputs.android.url = "github:tadfisher/android-nixpkgs";
 
 outputs = { self, nixpkgs, android }: rec {
     system = "x86_64-linux";
-    version = "4.5.rc2";
+    version = "4.5.rc";
     exporttemplateurl = "https://github.com/godotengine/godot-builds/releases/download/4.5-rc2/Godot_v4.5-rc2_export_templates.tpz";
-    exporttemplatesha256 = "sha256-UkUrIGVK44ukS0BqJKEsR9fjSvMIemS8jWyxXJRrrQA=";
+    exporttemplatesha256 = "sha256-43kPaK+h3emjk9SahtKEBunOeYowBFEWgCUyle4FMvo=";
     pkgs = import nixpkgs { inherit system; config = { allowUnfree = true; android_sdk.accept_license = true; }; };
 
     androidenv = android.sdk.x86_64-linux (sdkPkgs: with sdkPkgs; [
