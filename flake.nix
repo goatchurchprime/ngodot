@@ -26,8 +26,8 @@ outputs = { self, nixpkgs, android }: rec {
                 name = "godot_${version}_wrapped";
                 owner = "godotengine";
                 repo = "godot";
-                rev = "68ea3d8aadfef2266da93e0fcdcc6d02bc791f19";
-                hash = "sha256-YyoeJVFM7UEyFcBiCT4VehouXbtzpLm1BVyvTm4tVLk=";
+                rev = "876b290332ec6f2e6d173d08162a02aa7e6ca46d";
+                hash = "sha256-JCIKhwBG43rahTPNEgMkxt6RUnXJXlzGJtNylvyrPmk=";
             };
 
             preBuild = ''
