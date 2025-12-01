@@ -9,7 +9,7 @@ outputs = { self, nixpkgs, android }: rec {
     system = "x86_64-linux";
     version = "4.6.dev";
     exporttemplateurl = "https://downloads.godotengine.org/?version=4.6&flavor=dev4&slug=export_templates.tpz&platform=templates";
-    exporttemplatesha256 = "sha256-yJtgO2g/fQR+VJK7vq8ek4ewCHJ4WUdqMxdEof6pKXI=";
+    exporttemplatesha256 = "sha256-qLNt8eQ+em9940B0Ed2GbOfuOzQ0ekL5pNY6Eoyhm/U=";
     pkgs = import nixpkgs { inherit system; config = { allowUnfree = true; android_sdk.accept_license = true; }; };
 
     androidenv = android.sdk.x86_64-linux (sdkPkgs: with sdkPkgs; [
